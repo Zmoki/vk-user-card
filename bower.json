@@ -1,9 +1,9 @@
 {
-    "name": "my-repo",
-    "version": "0.0.0",
-    "description": "My awesome Custom Element",
+    "name": "vk-user-card",
+    "version": "0.0.1",
+    "description": "Web Component to VK user preview card",
     "license": "MIT",
-    "main": "src/my-element.html",
+    "main": "src/vk-user-card.html",
     "keywords": [
         "web-components"
     ],

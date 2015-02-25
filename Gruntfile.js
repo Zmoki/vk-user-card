@@ -11,11 +11,11 @@ module.exports = function(grunt) {
         },
         'gh-pages': {
             options: {
-                clone: 'bower_components/my-repo'
+                clone: 'bower_components/vk-user-card'
             },
             src: [
                 'bower_components/**/*',
-                '!bower_components/my-repo/**/*',
+                '!bower_components/vk-user-card/**/*',
                 'demo/*', 'src/*', 'index.html'
             ]
         }
