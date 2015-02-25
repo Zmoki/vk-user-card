@@ -1,0 +1,84 @@
+<template>
+    <style>
+        .user {
+            display: inline-block;
+            width: 282px;
+            height: auto;
+            padding: 12px;
+            overflow: hidden;
+            position: relative;
+            background-color: #fff;
+            border: 1px solid #e1e4eb;
+            text-align: center;
+            color: #000;
+            font-weight: 100;
+            transition: background 1000ms ease-out;
+            font-family: tahoma, arial, verdana, sans-serif, 'Lucida Sans';
+            font-size: 11px;
+        }
+        .user a{
+            color: #2B587A;
+            text-decoration: none;
+        }
+        .user a:hover{
+            text-decoration: underline;
+        }
+        .user-fullname{
+            font-size: 15px;
+        }
+    </style>
+    <section class="user">
+        <figure class="user-photo">
+            <img src="" alt=""/>
+        </figure>
+        <a href="" target="_blank" class="user-link">
+            <h1 class="user-fullname"></h1>
+        </a>
+
+        <p class="user-city"></p>
+    </section>
+</template>
+<script>
+    (function(window, document){
+        var apiUrl = 'http://api.vk.com/method/';
+        var thatDoc = document,
+                thisDoc = (thatDoc._currentScript || thatDoc.currentScript).ownerDocument,
+                template = thisDoc.querySelector('template').content;
+        // Creates an object based in the HTML Element prototype
+        var vkUserCardProto = Object.create(HTMLElement.prototype);
+        // Fires when an instance of the vkUserCardProto is created
+        vkUserCardProto.createdCallback = function(){
+            // Creates the shadow root
+            this.shadow = this.createShadowRoot();
+            this.shadow.appendChild(thatDoc.importNode(template, true));
+        };
+        // Fires when an instance was inserted into the document
+        vkUserCardProto.attachedCallback = function(){
+            var vkUserCard = this;
+            var script = thatDoc.createElement('SCRIPT');
+            script.src = apiUrl + 'users.get?user_id=' + vkUserCard.getAttribute('user') + '&fields=photo_200,city,screen_name&v=5.8&callback=vkUsersGetCallback'
+            thatDoc.getElementsByTagName("head")[0].appendChild(script);
+            window.vkUsersGetCallback = function(result) {
+                if(result.response && result.response[0]){
+                    vkUserCard.userGetCallback(result.response[0]);
+                }
+            }
+        };
+        // Fires when an instance was removed from the document
+        vkUserCardProto.detachedCallback = function(){
+        };
+        // Fires when an attribute was added, removed, or updated
+        vkUserCardProto.attributeChangedCallback = function(attr, oldVal, newVal){
+        };
+        vkUserCardProto.userGetCallback = function(user){
+            var userTmpl = this.shadow;
+            userTmpl.querySelector('.user-photo img').src = user.photo_200;
+            userTmpl.querySelector('.user-link').href = 'http://vk.com/' + user.screen_name;
+            userTmpl.querySelector('.user-fullname').textContent = [user.first_name, user.last_name].join(' ');
+            userTmpl.querySelector('.user-city').textContent = user.city.title;
+        }
+        document.registerElement('vk-user-card', {
+            prototype: vkUserCardProto
+        });
+    }(window, document));
+</script>
